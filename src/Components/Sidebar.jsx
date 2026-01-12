@@ -7,6 +7,7 @@ import shorts from "../assets/shorts.png"
 import music from "../assets/music.png"
 import news from "../assets/news.png"
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const SidebarItem = ({ icon, label, active, onClick }) => {
     
@@ -26,13 +27,18 @@ const SidebarItem = ({ icon, label, active, onClick }) => {
 };
 
 const Sidebar = () => {
+    const navigate = useNavigate();
     const [activeState, setActiveState] = useState("Home");
     const selector = useSelector((store) => store.sidebar.isOpen);
     const handleClick = (item) => {
+        if(item == "Home") { 
+          navigate('/');
+        }
         setActiveState(item);
     }
 
     if (!selector) return null;
+
     
   return (
     <div  className='px-5 pt-6 w-48 h-screen bg-gray-000 select-none '>

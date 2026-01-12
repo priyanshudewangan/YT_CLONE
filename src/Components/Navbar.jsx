@@ -3,35 +3,35 @@ import menu from "../assets/menu.png";
 import { useNavigate } from "react-router-dom";
 import { GoogleAPIkey, YOUTUBE_SEARCH_API, YOUTUBE_SUGGESTION_API } from "../Utils/Constant";
 import { useDispatch, useSelector } from "react-redux";
-import { cacheResults } from "../Utils/searchSlice";
+import { cacheResults, setQuery } from "../Utils/searchSlice";
 import { toggleSidebar } from "../Utils/sideBarSlice";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const query = useSelector((store) => store.search.query);
   const handleYTclick = () => {
     navigate("/");
   }
-
-  const [query, setQuery] = useState("");
   const [suggestions, setSuggestion] = useState([]);
 
   const getSearchSuggestions = async () => {
     if (!query.trim()) {
       setSuggestion([]);
       return};
+      
     const data = await fetch(YOUTUBE_SUGGESTION_API + query)
     const json = await data.json();
     setSuggestion(json[1]);
     
     // console.log(json[1]);
-    dispatch(cacheResults({
-      [query]: json[1] // we are writing in this format because json[1] is an object and it must have a key
+    dispatch(cacheResults({                                                              
+      [query]: json[1] || [] // we are writing in this format because json[1] is an object and it must have a key
     }))
     
   }
   
-  const searchCache = useSelector((store) => store.search);
+  const searchCache = useSelector((store) => store.search.cache);
 
   useEffect(() => {
     console.log(query);
@@ -50,12 +50,18 @@ const Navbar = () => {
   }, [query])
 
   const handleSearchClick = (item) => {
-    setQuery(item);
+    dispatch(setQuery(item));
   }
 
 
   const handleMenuClick = () => {
     dispatch(toggleSidebar());
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigate("/search");
+    setSuggestion([]); // making this so that when we go to search page the suggestion automatically collapses
   }
 
   return (
@@ -80,18 +86,19 @@ const Navbar = () => {
 
       {/* CENTER */}
       <div className="col-span-6 md:col-span-8 flex justify-center items-center">
-        <div className="relative w-full max-w-xl h-auto flex flex-col px-4 bg-gray-200 border border-gray-400 rounded-full">          <div className="flex items-center">
+        <form className="relative w-full max-w-xl h-auto flex flex-col px-4 bg-gray-200 border border-gray-400 rounded-full">          <div className="flex items-center">
 
             <input
               className=" w-full h-10 bg-transparent flex items-center outline-none px-9"
               placeholder="Search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => dispatch(setQuery(e.target.value))}
             />
             <img
               className="h-5 w-5 cursor-pointer"
               src="https://www.freeiconspng.com/uploads/search-icon-png-5.png"
               alt="search"
+              onClick={handleSubmit}
             />
           </div>
           <div>
@@ -106,7 +113,7 @@ const Navbar = () => {
             </ul>}
             
           </div>
-        </div>
+        </form>
 
       </div>
 

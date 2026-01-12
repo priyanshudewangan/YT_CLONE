@@ -38,7 +38,7 @@ const Videos = ({ ids }) => {
                     </p>
 
                     <p className="text-sm text-gray-600">
-                        {formatViews(id.statistics.viewCount)} views
+                        {id.statistics ? `${formatViews(id.statistics.viewCount)}` : "-"} views
                     </p>
                 </div>
             ))}

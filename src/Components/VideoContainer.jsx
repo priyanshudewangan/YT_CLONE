@@ -35,7 +35,7 @@ const VideoContainer = () => {
                 {/* <Sidebar /> */}
                 <div>
                     <ButtonList />
-                    <Videos ids={videoId} />
+                    <Videos ids={videoId || []} />
                 </div>
             </div>
         </div>

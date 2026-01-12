@@ -11,6 +11,9 @@ const WatchPage = () => {
     const dispatch = useDispatch();
     const [searchParams] = useSearchParams(); //its related to URL after "?".
     const [videoDetails, setVideoDetails] = useState(null);
+
+    //For show more
+    const [showMore, setShowMore] = useState(false);
     const videoId = searchParams.get("v");
 
     useEffect(() => {
@@ -82,7 +85,8 @@ const WatchPage = () => {
 
             {/* Description */}
             <div className="m-1 mt-5 bg-gray-200 rounded-lg p-2 ">
-                <p>{videoDetails.snippet.localized.description}</p>
+                <p className={showMore ? "" : "line-clamp-5"}>{videoDetails.snippet.localized.description} <span>more</span></p>
+                <button className="font-bold" onClick={() => setShowMore(!showMore)}>{showMore ? "less"  : "more"}</button>
             </div>
 
             {/* Comments */}
